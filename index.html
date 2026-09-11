@@ -1,0 +1,1966 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MetLife — Pesquisa de Avaliação do Piloto</title>
+  <meta name="description" content="Pesquisa de Avaliação do Piloto MetLife: experiência de utilização, qualidade das simulações, assertividade de feedbacks e desenvolvimento comercial.">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary: #007abc;
+      --primary-dark: #002f6c;
+      --primary-navy: #0b1f3a;
+      --primary-hover: #00629b;
+      --primary-soft: #ebf5fa;
+      --accent-green: #a4ce4e;
+      --accent-green-dark: #6e8e24;
+      --accent-green-soft: #f1f9e6;
+
+      --nps-detractor: #ef4444;
+      --nps-passive: #f59e0b;
+      --nps-promoter: #10b981;
+
+      --bg-body: #f4f7fb;
+      --bg-card: #ffffff;
+      --bg-input: #f8fafc;
+      --border: #e2e8f0;
+      --border-focus: #007abc;
+
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+      --text-light: #94a3b8;
+
+      --shadow-sm: 0 1px 3px rgba(11, 31, 58, 0.05);
+      --shadow-md: 0 4px 14px rgba(11, 31, 58, 0.07);
+      --shadow-lg: 0 12px 30px rgba(11, 31, 58, 0.10);
+      --shadow-xl: 0 20px 45px rgba(11, 31, 58, 0.14);
+
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-full: 9999px;
+
+      --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: var(--bg-body);
+      color: var(--text-main);
+      line-height: 1.55;
+      padding-bottom: 96px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    h1, h2, h3, h4, .brand-title {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 700;
+      color: var(--primary-navy);
+      letter-spacing: -0.02em;
+    }
+
+    /* Fixed Header */
+    .app-header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .header-container {
+      max-width: 1060px;
+      margin: 0 auto;
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+
+    .logo-badge {
+      width: 38px;
+      height: 38px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 800;
+      font-size: 20px;
+      position: relative;
+      box-shadow: 0 4px 10px rgba(0, 122, 188, 0.25);
+    }
+
+    .logo-badge::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      right: -2px;
+      width: 11px;
+      height: 11px;
+      background: var(--accent-green);
+      border: 2px solid #fff;
+      border-radius: 50%;
+    }
+
+    .brand-title {
+      font-size: 19px;
+      font-weight: 800;
+      color: var(--primary-dark);
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+    }
+
+    .brand-subtitle {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    /* Progress Widget */
+    .progress-widget {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: #f1f5f9;
+      padding: 6px 14px;
+      border-radius: var(--radius-full);
+      border: 1px solid var(--border);
+    }
+
+    .progress-bar-wrap {
+      width: 120px;
+      height: 8px;
+      background: #e2e8f0;
+      border-radius: var(--radius-full);
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--primary), var(--accent-green));
+      border-radius: var(--radius-full);
+      transition: width 0.3s ease;
+    }
+
+    .progress-text {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--primary-navy);
+      min-width: 32px;
+    }
+
+    .btn-header-clean {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 6px 12px;
+      border-radius: var(--radius-full);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: var(--transition);
+    }
+
+    .btn-header-clean:hover {
+      background: #eef2f6;
+      color: var(--text-main);
+    }
+
+    /* Main Grid Layout */
+    .main-grid {
+      max-width: 1060px;
+      margin: 28px auto 0;
+      padding: 0 20px;
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 28px;
+      align-items: start;
+    }
+
+    @media (max-width: 860px) {
+      .main-grid {
+        grid-template-columns: 1fr;
+        padding: 0 16px;
+      }
+      .sidebar-nav {
+        display: none !important;
+      }
+      .progress-bar-wrap {
+        width: 80px;
+      }
+    }
+
+    /* Sidebar Navigation */
+    .sidebar-nav {
+      position: sticky;
+      top: 84px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .sidebar-header {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .sidebar-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .sidebar-item a {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 9px 10px;
+      border-radius: var(--radius-sm);
+      text-decoration: none;
+      color: var(--text-muted);
+      font-size: 13px;
+      font-weight: 500;
+      transition: var(--transition);
+    }
+
+    .sidebar-item a:hover {
+      background: #f1f5f9;
+      color: var(--primary-navy);
+    }
+
+    .sidebar-item.active a {
+      background: var(--primary-soft);
+      color: var(--primary);
+      font-weight: 700;
+    }
+
+    .badge-count {
+      font-size: 11px;
+      padding: 2px 7px;
+      border-radius: var(--radius-full);
+      background: #e2e8f0;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .sidebar-item.completed .badge-count {
+      background: var(--accent-green-soft);
+      color: var(--accent-green-dark);
+    }
+
+    /* Content Area */
+    .content-area {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    /* Hero Banner */
+    .hero-banner {
+      background: linear-gradient(135deg, #07223b 0%, #004570 65%, #007abc 100%);
+      border-radius: var(--radius-lg);
+      padding: 34px 32px;
+      color: #ffffff;
+      box-shadow: var(--shadow-lg);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-banner::after {
+      content: '';
+      position: absolute;
+      top: -80px;
+      right: -80px;
+      width: 240px;
+      height: 240px;
+      background: radial-gradient(circle, rgba(164, 206, 78, 0.28) 0%, rgba(164, 206, 78, 0) 70%);
+      border-radius: 50%;
+    }
+
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.14);
+      backdrop-filter: blur(8px);
+      padding: 5px 14px;
+      border-radius: var(--radius-full);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-bottom: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .hero-tag-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--accent-green);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--accent-green);
+    }
+
+    .hero-title {
+      font-size: 27px;
+      color: #ffffff;
+      margin-bottom: 12px;
+      line-height: 1.25;
+    }
+
+    .hero-desc {
+      font-size: 14.5px;
+      color: #e2e8f0;
+      max-width: 640px;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(255, 255, 255, 0.15);
+      font-size: 13px;
+      color: #cbd5e1;
+    }
+
+    .hero-meta-item {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .hero-meta-item strong {
+      color: #ffffff;
+    }
+
+    /* Block Card */
+    .block-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      transition: var(--transition);
+    }
+
+    .block-card:hover {
+      box-shadow: var(--shadow-md);
+      border-color: #cbd5e1;
+    }
+
+    .block-header {
+      padding: 20px 28px 16px;
+      background: linear-gradient(180deg, #ffffff 0%, #fcfdfe 100%);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+    }
+
+    .block-pill {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--primary);
+      background: var(--primary-soft);
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      display: inline-block;
+      margin-bottom: 6px;
+    }
+
+    .block-title {
+      font-size: 18.5px;
+      color: var(--primary-navy);
+    }
+
+    .block-status-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #f1f5f9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-light);
+      font-size: 13px;
+      transition: var(--transition);
+      flex-shrink: 0;
+    }
+
+    .block-card.is-complete .block-status-icon {
+      background: var(--accent-green-soft);
+      color: var(--accent-green-dark);
+    }
+
+    .block-body {
+      padding: 12px 28px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 26px;
+    }
+
+    /* Question Item */
+    .question-item {
+      padding-top: 20px;
+      border-top: 1px solid #f1f5f9;
+    }
+
+    .question-item:first-child {
+      border-top: none;
+      padding-top: 8px;
+    }
+
+    .question-header {
+      margin-bottom: 14px;
+    }
+
+    .question-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      background: var(--primary-soft);
+      color: var(--primary);
+      border-radius: var(--radius-sm);
+      font-size: 12px;
+      font-weight: 800;
+      margin-right: 8px;
+    }
+
+    .question-text {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--primary-navy);
+      display: inline;
+      line-height: 1.45;
+    }
+
+    .question-badge {
+      display: inline-block;
+      font-size: 11px;
+      color: var(--text-muted);
+      background: #f1f5f9;
+      padding: 2px 8px;
+      border-radius: var(--radius-full);
+      margin-left: 8px;
+      font-weight: 500;
+    }
+
+    /* Scale 1-5 Component */
+    .scale-5-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .scale-5-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+    }
+
+    @media (max-width: 540px) {
+      .scale-5-grid {
+        gap: 6px;
+      }
+    }
+
+    .scale-option {
+      position: relative;
+      cursor: pointer;
+    }
+
+    .scale-option input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .scale-tile {
+      border: 1.5px solid var(--border);
+      background: var(--bg-card);
+      border-radius: var(--radius-md);
+      padding: 14px 6px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      transition: var(--transition);
+      user-select: none;
+      height: 100%;
+    }
+
+    .scale-tile:hover {
+      border-color: var(--primary);
+      background: #f8fbfe;
+      transform: translateY(-2px);
+    }
+
+    .scale-option input:checked + .scale-tile {
+      border-color: var(--primary);
+      background: var(--primary-soft);
+      box-shadow: 0 0 0 3px rgba(0, 122, 188, 0.15);
+      transform: translateY(-2px);
+    }
+
+    .scale-digit {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--primary-navy);
+      line-height: 1;
+    }
+
+    .scale-option input:checked + .scale-tile .scale-digit {
+      color: var(--primary);
+    }
+
+    .scale-desc {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 500;
+      line-height: 1.2;
+    }
+
+    .scale-legend {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 500;
+      padding: 0 4px;
+    }
+
+    /* Single Choice Group */
+    .choice-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .choice-card {
+      position: relative;
+      cursor: pointer;
+    }
+
+    .choice-card input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .choice-body {
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--bg-card);
+      transition: var(--transition);
+      user-select: none;
+    }
+
+    .choice-card:hover .choice-body {
+      border-color: #cbd5e1;
+      background: #f8fafc;
+    }
+
+    .choice-card input:checked + .choice-body {
+      border-color: var(--primary);
+      background: #f0f7fc;
+      box-shadow: 0 0 0 3px rgba(0, 122, 188, 0.12);
+    }
+
+    .choice-circle {
+      width: 18px;
+      height: 18px;
+      border: 2px solid #94a3b8;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+      flex-shrink: 0;
+    }
+
+    .choice-card input:checked + .choice-body .choice-circle {
+      border-color: var(--primary);
+      background: var(--primary);
+    }
+
+    .choice-dot {
+      width: 6px;
+      height: 6px;
+      background: #ffffff;
+      border-radius: 50%;
+      opacity: 0;
+      transform: scale(0);
+      transition: var(--transition);
+    }
+
+    .choice-card input:checked + .choice-body .choice-dot {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .choice-text {
+      font-size: 14px;
+      color: var(--text-main);
+      font-weight: 500;
+    }
+
+    .choice-card input:checked + .choice-body .choice-text {
+      color: var(--primary-navy);
+      font-weight: 600;
+    }
+
+    /* Textarea Field */
+    .textarea-wrap {
+      position: relative;
+    }
+
+    .form-textarea {
+      width: 100%;
+      min-height: 100px;
+      padding: 14px 16px;
+      border-radius: var(--radius-md);
+      border: 1.5px solid var(--border);
+      font-family: inherit;
+      font-size: 14px;
+      color: var(--text-main);
+      background: var(--bg-input);
+      transition: var(--transition);
+      resize: vertical;
+      line-height: 1.5;
+    }
+
+    .form-textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      background: #ffffff;
+      box-shadow: 0 0 0 3px rgba(0, 122, 188, 0.15);
+    }
+
+    .form-textarea::placeholder {
+      color: var(--text-light);
+    }
+
+    .textarea-hint {
+      text-align: right;
+      font-size: 11.5px;
+      color: var(--text-light);
+      margin-top: 4px;
+    }
+
+    /* NPS 0-10 Scale */
+    .nps-box-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .nps-grid {
+      display: grid;
+      grid-template-columns: repeat(11, 1fr);
+      gap: 6px;
+    }
+
+    @media (max-width: 680px) {
+      .nps-grid {
+        grid-template-columns: repeat(6, 1fr);
+      }
+    }
+
+    .nps-item {
+      position: relative;
+      cursor: pointer;
+    }
+
+    .nps-item input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .nps-tile {
+      border: 1.5px solid var(--border);
+      background: var(--bg-card);
+      border-radius: var(--radius-md);
+      padding: 14px 2px;
+      text-align: center;
+      transition: var(--transition);
+      user-select: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .nps-score {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--primary-navy);
+      line-height: 1;
+    }
+
+    .nps-tile:hover {
+      transform: translateY(-2px);
+      border-color: var(--primary);
+      background: #f8fbfe;
+    }
+
+    .nps-item.detractor input:checked + .nps-tile {
+      border-color: var(--nps-detractor);
+      background: #fef2f2;
+      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+    }
+    .nps-item.detractor input:checked + .nps-tile .nps-score {
+      color: var(--nps-detractor);
+    }
+
+    .nps-item.passive input:checked + .nps-tile {
+      border-color: var(--nps-passive);
+      background: #fffbeb;
+      box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.15);
+    }
+    .nps-item.passive input:checked + .nps-tile .nps-score {
+      color: var(--nps-passive);
+    }
+
+    .nps-item.promoter input:checked + .nps-tile {
+      border-color: var(--nps-promoter);
+      background: #ecfdf5;
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+    }
+    .nps-item.promoter input:checked + .nps-tile .nps-score {
+      color: var(--nps-promoter);
+    }
+
+    .nps-labels {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      color: var(--text-muted);
+      padding: 0 4px;
+    }
+
+    .label-detractor { color: #dc2626; font-weight: 600; }
+    .label-passive { color: #d97706; font-weight: 600; }
+    .label-promoter { color: #059669; font-weight: 600; }
+
+    /* Bottom Action Bar */
+    .bottom-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(12px);
+      border-top: 1px solid var(--border);
+      padding: 14px 24px;
+      z-index: 40;
+      box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.05);
+    }
+
+    .bottom-bar-container {
+      max-width: 1060px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .autosave-notice {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .status-bulb {
+      width: 7px;
+      height: 7px;
+      background: var(--accent-green);
+      border-radius: 50%;
+    }
+
+    .actions-cluster {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border-radius: var(--radius-md);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: var(--transition);
+      border: 1px solid transparent;
+      text-decoration: none;
+    }
+
+    .btn-outline {
+      background: #ffffff;
+      border-color: var(--border);
+      color: var(--text-main);
+    }
+
+    .btn-outline:hover {
+      background: #f1f5f9;
+      border-color: #cbd5e1;
+    }
+
+    .btn-submit {
+      background: linear-gradient(135deg, var(--primary) 0%, #005a8f 100%);
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(0, 122, 188, 0.25);
+    }
+
+    .btn-submit:hover {
+      background: linear-gradient(135deg, #0087d1 0%, var(--primary) 100%);
+      box-shadow: 0 6px 16px rgba(0, 122, 188, 0.35);
+      transform: translateY(-1px);
+    }
+
+    /* Modal */
+    .modal-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(11, 31, 58, 0.65);
+      backdrop-filter: blur(6px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 100;
+      opacity: 0;
+      transition: opacity 0.25s ease;
+    }
+
+    .modal-backdrop.active {
+      display: flex;
+      opacity: 1;
+    }
+
+    .modal-box {
+      background: #ffffff;
+      border-radius: var(--radius-lg);
+      max-width: 520px;
+      width: 100%;
+      padding: 36px 32px;
+      box-shadow: var(--shadow-xl);
+      text-align: center;
+      transform: scale(0.95);
+      transition: transform 0.25s ease;
+    }
+
+    .modal-backdrop.active .modal-box {
+      transform: scale(1);
+    }
+
+    .modal-icon-wrap {
+      width: 64px;
+      height: 64px;
+      background: var(--accent-green-soft);
+      color: var(--accent-green-dark);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 18px;
+      font-size: 32px;
+      box-shadow: 0 0 0 4px var(--accent-green-soft);
+    }
+
+    .modal-heading {
+      font-size: 22px;
+      margin-bottom: 8px;
+      color: var(--primary-navy);
+    }
+
+    .modal-paragraph {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 22px;
+      line-height: 1.5;
+    }
+
+    .modal-stats {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      text-align: left;
+      margin-bottom: 22px;
+      font-size: 13px;
+    }
+
+    .modal-stat-line {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 0;
+      border-bottom: 1px solid #edf2f7;
+    }
+
+    .modal-stat-line:last-child {
+      border-bottom: none;
+    }
+
+    .modal-buttons {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    /* Print Styles */
+    @media print {
+      body {
+        background: #ffffff;
+        padding-bottom: 0;
+      }
+      .app-header, .sidebar-nav, .bottom-bar, .modal-backdrop {
+        display: none !important;
+      }
+      .main-grid {
+        grid-template-columns: 1fr;
+        margin: 0;
+        padding: 0;
+      }
+      .block-card {
+        break-inside: avoid;
+        box-shadow: none;
+        border: 1px solid #cbd5e1;
+        margin-bottom: 20px;
+      }
+      .hero-banner {
+        background: #0b1f3a !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Header -->
+  <header class="app-header">
+    <div class="header-container">
+      <a href="#" class="brand-logo">
+        <div class="logo-badge">M</div>
+        <div>
+          <div class="brand-title">MetLife</div>
+          <div class="brand-subtitle">Piloto Comercial</div>
+        </div>
+      </a>
+
+      <div class="header-actions">
+        <!-- Progress Counter -->
+        <div class="progress-widget" title="Progresso do formulário">
+          <span class="progress-text" id="progressPercent">0%</span>
+          <div class="progress-bar-wrap">
+            <div class="progress-bar-fill" id="progressBar"></div>
+          </div>
+          <span style="font-size: 11px; color: var(--text-muted);" id="progressCount">0/22</span>
+        </div>
+
+        <button type="button" class="btn-header-clean" id="clearBtn" title="Limpar respostas salvas">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18m-2 0v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6m3 0V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+          Limpar
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Layout Container -->
+  <div class="main-grid">
+    
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar-nav">
+      <div class="sidebar-header">
+        <span>Seções</span>
+        <span style="font-size: 10px; color: var(--accent-green-dark); font-weight: 700;">7 BLOCOS</span>
+      </div>
+      <ul class="sidebar-list">
+        <li class="sidebar-item" data-block="1">
+          <a href="#bloco-1">
+            <span>1. Experiência de Uso</span>
+            <span class="badge-count" id="badge-1">0/4</span>
+          </a>
+        </li>
+        <li class="sidebar-item" data-block="2">
+          <a href="#bloco-2">
+            <span>2. Realismo & Relevância</span>
+            <span class="badge-count" id="badge-2">0/4</span>
+          </a>
+        </li>
+        <li class="sidebar-item" data-block="3">
+          <a href="#bloco-3">
+            <span>3. Feedback</span>
+            <span class="badge-count" id="badge-3">0/3</span>
+          </a>
+        </li>
+        <li class="sidebar-item" data-block="4">
+          <a href="#bloco-4">
+            <span>4. Calibragem</span>
+            <span class="badge-count" id="badge-4">0/4</span>
+          </a>
+        </li>
+        <li class="sidebar-item" data-block="5">
+          <a href="#bloco-5">
+            <span>5. Evolução & Aprendizado</span>
+            <span class="badge-count" id="badge-5">0/3</span>
+          </a>
+        </li>
+        <li class="sidebar-item" data-block="6">
+          <a href="#bloco-6">
+            <span>6. Recomendação (NPS)</span>
+            <span class="badge-count" id="badge-6">0/1</span>
+          </a>
+        </li>
+        <li class="sidebar-item" data-block="7">
+          <a href="#bloco-7">
+            <span>7. Feedback Final</span>
+            <span class="badge-count" id="badge-7">0/3</span>
+          </a>
+        </li>
+      </ul>
+
+      <div style="margin-top: 18px; padding-top: 12px; border-top: 1px solid var(--border); font-size: 11px; color: var(--text-muted); line-height: 1.4;">
+        <strong style="color: var(--primary-navy); display: block; margin-bottom: 2px;">Salvamento automático:</strong>
+        Suas respostas são gravadas a cada interação.
+      </div>
+    </aside>
+
+    <!-- Main Questionnaire Area -->
+    <main class="content-area">
+      
+      <!-- Hero Header -->
+      <section class="hero-banner">
+        <div class="hero-tag">
+          <span class="hero-tag-dot"></span>
+          Programa de Simulação Comercial
+        </div>
+        <h1 class="hero-title">METLIFE — PESQUISA DE AVALIAÇÃO DO PILOTO</h1>
+        <p class="hero-desc">
+          <strong>Objetivo:</strong> avaliar a experiência de utilização, a qualidade das simulações, a assertividade dos feedbacks e o potencial da plataforma como ferramenta de desenvolvimento comercial.
+        </p>
+        <div class="hero-meta">
+          <div class="hero-meta-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <span>Tempo estimado: <strong>4–5 minutos</strong></span>
+          </div>
+          <div class="hero-meta-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <span>Participação: <strong>Confidencial</strong></span>
+          </div>
+          <div class="hero-meta-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            <span>Total: <strong>22 Questões</strong></span>
+          </div>
+        </div>
+      </section>
+
+      <form id="surveyForm" autocomplete="off">
+
+        <!-- BLOCO 1 -->
+        <section class="block-card" id="bloco-1" data-block-id="1">
+          <div class="block-header">
+            <div>
+              <span class="block-pill">Bloco 1</span>
+              <h2 class="block-title">EXPERIÊNCIA DE USO (UX)</h2>
+            </div>
+            <div class="block-status-icon" id="status-1">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+          </div>
+          <div class="block-body">
+
+            <!-- Q1 -->
+            <div class="question-item" data-qid="q1">
+              <div class="question-header">
+                <span class="question-num">1</span>
+                <span class="question-text">Como você avalia a facilidade de utilização da plataforma?</span>
+                <span class="question-badge">Escala 1–5</span>
+              </div>
+              <div class="scale-5-group">
+                <div class="scale-5-grid">
+                  <label class="scale-option"><input type="radio" name="q1" value="1"><div class="scale-tile"><span class="scale-digit">1</span><span class="scale-desc">Muito difícil</span></div></label>
+                  <label class="scale-option"><input type="radio" name="q1" value="2"><div class="scale-tile"><span class="scale-digit">2</span><span class="scale-desc">Difícil</span></div></label>
+                  <label class="scale-option"><input type="radio" name="q1" value="3"><div class="scale-tile"><span class="scale-digit">3</span><span class="scale-desc">Regular</span></div></label>
+                  <label class="scale-option"><input type="radio" name="q1" value="4"><div class="scale-tile"><span class="scale-digit">4</span><span class="scale-desc">Fácil</span></div></label>
+                  <label class="scale-option"><input type="radio" name="q1" value="5"><div class="scale-tile"><span class="scale-digit">5</span><span class="scale-desc">Muito fácil</span></div></label>
+                </div>
+                <div class="scale-legend">
+                  <span>1 = Muito difícil</span>
+                  <span>5 = Muito fácil</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Q2 -->
+            <div class="question-item" data-qid="q2">
+              <div class="question-header">
+                <span class="question-num">2</span>
+                <span class="question-text">Como você avalia a navegação e a experiência geral de utilização?</span>
+                <span class="question-badge">Escala 1–5</span>
+              </div>
+              <div class="scale-5-group">
+                <div class="scale-5-grid">
+                  <label class="scale-option"><input type="radio" name="q2" value="1"><div class="scale-tile"><span class="scale-digit">1</span><span class="scale-desc">Muito ruim</span></div></label>
+                  <label class="scale-option"><input type="radio" name="q2" value="2"><div class="scale-tile"><span class="scale-digit">2</span><span class="scale-desc">Ruim</span></div></label>
+                  <label class="scale-option"><input type="radio" name="q2" value="3"><div class="scale-tile"><span class="scale-digit">3</span><span class="scale-desc">Regular</span></div></label>
+                  <label class="scale-option"><input type="radio" name="q2" value="4"><div class="scale-tile"><span class="scale-digit">4</span><span class="scale-desc">Boa</span></div></label>
+                  <label class="scale-option"><input type="radio" name="q2" value="5"><div class="scale-tile"><span class="scale-digit">5</span><span class="scale-desc">Excelente</span></div></label>
+                </div>
+                <div class="scale-legend">
+                  <span>1 = Muito ruim</span>
+                  <span>5 = Excelente</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Q3 -->
+            <div class="question-item" data-qid="q3">
+              <div class="question-header">
+                <span class="question-num">3</span>
+                <span class="question-text">As instruções e orientações apresentadas foram claras?</span>
+                <span class="question-badge">Escala 1–5</span>
+              </div>
+              <div class="scale-5-group">
+                <div class="scale-5-grid">
+                  <label class="scale-option"><input type="radio" name="q3" value="1"><div class="scale-tile"><span class="scale-digit">1</span><span class="scale-desc">Nada claras</span></div></label>
+                  <label class="scale-option"><input type="radio" name="q3" value="2"><div class="scale-tile"><span class="scale-digit">2</span><span class="scale-desc">Pouco claras</span></div></label>
+                  <label class="scale-option"><input type="radio" name="q3" value="3"><div class="scale-tile"><span class="scale-digit">3</span><span class="scale-desc">Neutras</span></div></label>
+                  <label class="scale-option"><input type="radio" name="q3" value="4"><div class="scale-tile"><span class="scale-digit">4</span><span class="scale-desc">Claras</span></div></label>
+                  <label class="scale-option"><input type="radio" name="q3" value="5"><div class="scale-tile"><span class="scale-digit">5</span><span class="scale-desc">Muito claras</span></div></label>
+                </div>
+                <div class="scale-legend">
+                  <span>1 = Nada claras</span>
+                  <span>5 = Muito claras</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Q4 -->
+            <div class="question-item" data-qid="q4">
+              <div class="question-header">
+                <span class="question-num">4</span>
+                <span class="question-text">Você encontrou algum problema técnico durante o piloto?</span>
+                <span class="question-badge">Escolha única</span>
+              </div>
+              <div class="choice-list">
+                <label class="choice-card">
+                  <input type="radio" name="q4" value="Não">
+                  <div class="choice-body">
+                    <div class="choice-circle"><span class="choice-dot"></span></div>
+                    <span class="choice-text">Não</span>
+                  </div>
+                </label>
+                <label class="choice-card">
+                  <input type="radio" name="q4" value="Sim, mas não prejudicou minha experiência">
+                  <div class="choice-body">
+                    <div class="choice-circle"><span class="choice-dot"></span></div>
+                    <span class="choice-text">Sim, mas não prejudicou minha experiência</span>
+                  </div>
+                </label>
+                <label class="choice-card">
+                  <input type="radio" name="q4" value="Sim, e prejudicou parcialmente minha experiência">
+                  <div class="choice-body">
+                    <div class="choice-circle"><span class="choice-dot"></span></div>
+                    <span class="choice-text">Sim, e prejudicou parcialmente minha experiência</span>
+                  </div>
+                </label>
+                <label class="choice-card">
+                  <input type="radio" name="q4" value="Sim, e impediu a realização de alguma atividade">
+                  <div class="choice-body">
+                    <div class="choice-circle"><span class="choice-dot"></span></div>
+                    <span class="choice-text">Sim, e impediu a realização de alguma atividade</span>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- BLOCO 2 -->
+        <section class="block-card" id="bloco-2" data-block-id="2">
+          <div class="block-header">
+            <div>
+              <span class="block-pill">Bloco 2</span>
+              <h2 class="block-title">REALISMO E RELEVÂNCIA</h2>
+            </div>
+            <div class="block-status-icon" id="status-2">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+          </div>
+          <div class="block-body">
+
+            <!-- Q5 -->
+            <div class="question-item" data-qid="q5">
+              <div class="question-header">
+                <span class="question-num">5</span>
+                <span class="question-text">O quanto as situações apresentadas nas simulações se aproximam de situações reais do seu dia a dia?</span>
+                <span class="question-badge">Escala 1–5</span>
+              </div>
+              <div class="scale-5-group">
+                <div class="scale-5-grid">
+                  <label class="scale-option"><input type="radio" name="q5" value="1"><div class="scale-tile"><span class="scale-digit">1</span><span class="scale-desc">Nada próximas</span></div></label>
+                  <label class="scale-option"><input type="radio" name="q5" value="2"><div class="scale-tile"><span class="scale-digit">2</span><span class="scale-desc">Pouco</span></div></label>
+                  <label class="scale-option"><input type="radio" name="q5" value="3"><div class="scale-tile"><span class="scale-digit">3</span><span class="scale-desc">Moderado</span></div></label>
+                  <label class="scale-option"><input type="radio" name="q5" value="4"><div class="scale-tile"><span class="scale-digit">4</span><span class="scale-desc">Próximas</span></div></label>
+                  <label class="scale-option"><input type="radio" name="q5" value="5"><div class="scale-tile"><span class="scale-digit">5</span><span class="scale-desc">Muito próximas</span></div></label>
+                </div>
+                <div class="scale-legend">
+                  <span>1 = Nada próximas</span>
+                  <span>5 = Muito próximas</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Q6 -->
+            <div class="question-item" data-qid="q6">
+              <div class="question-header">
+                <span class="question-num">6</span>
+                <span class="question-text">Como você avalia a relevância dos cenários apresentados para sua atividade profissional?</span>
+                <span class="question-badge">Escala 1–5</span>
+              </div>
+              <div class="scale-5-group">
+                <div class="scale-5-grid">
+                  <label class="scale-option"><input type="radio" name="q6" value="1"><div class="scale-tile"><span class="scale-digit">1</span><span class="scale-desc">Nada relevantes</span></div></label>
+                  <label class="scale-option"><input type="radio" name="q6" value="2"><div class="scale-tile"><span class="scale-digit">2</span><span class="scale-desc">Pouco</span></div></label>
+                  <label class="scale-option"><input type="radio" name="q6" value="3"><div class="scale-tile"><span class="scale-digit">3</span><span class="scale-desc">Médias</span></div></label>
+                  <label class="scale-option"><input type="radio" name="q6" value="4"><div class="scale-tile"><span class="scale-digit">4</span><span class="scale-desc">Relevantes</span></div></label>
+                  <label class="scale-option"><input type="radio" name="q6" value="5"><div class="scale-tile"><span class="scale-digit">5</span><span class="scale-desc">Muito relevantes</span></div></label>
+                </div>
+                <div class="scale-legend">
+                  <span>1 = Nada relevantes</span>
+                  <span>5 = Muito relevantes</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Q7 -->
+            <div class="question-item" data-qid="q7">
+              <div class="question-header">
+                <span class="question-num">7</span>
+                <span class="question-text">O nível de dificuldade das simulações foi adequado à sua experiência?</span>
+                <span class="question-badge">Escolha única</span>
+              </div>
+              <div class="choice-list">
+                <label class="choice-card"><input type="radio" name="q7" value="Muito abaixo do meu nível"><div class="choice-body"><div class="choice-circle"><span class="choice-dot"></span></div><span class="choice-text">Muito abaixo do meu nível</span></div></label>
+                <label class="choice-card"><input type="radio" name="q7" value="Um pouco abaixo"><div class="choice-body"><div class="choice-circle"><span class="choice-dot"></span></div><span class="choice-text">Um pouco abaixo</span></div></label>
+                <label class="choice-card"><input type="radio" name="q7" value="Adequado"><div class="choice-body"><div class="choice-circle"><span class="choice-dot"></span></div><span class="choice-text">Adequado</span></div></label>
+                <label class="choice-card"><input type="radio" name="q7" value="Um pouco acima"><div class="choice-body"><div class="choice-circle"><span class="choice-dot"></span></div><span class="choice-text">Um pouco acima</span></div></label>
+                <label class="choice-card"><input type="radio" name="q7" value="Muito acima"><div class="choice-body"><div class="choice-circle"><span class="choice-dot"></span></div><span class="choice-text">Muito acima</span></div></label>
+              </div>
+            </div>
+
+            <!-- Q8 -->
+            <div class="question-item" data-qid="q8">
+              <div class="question-header">
+                <span class="question-num">8</span>
+                <span class="question-text">Que situações ou temas você gostaria de encontrar nas próximas simulações?</span>
+                <span class="question-badge">Resposta aberta</span>
+              </div>
+              <div class="textarea-wrap">
+                <textarea class="form-textarea" name="q8" id="q8" placeholder="Sugira novos temas, cenários comerciais ou objeções para simular..."></textarea>
+                <div class="textarea-hint">Opcional</div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- BLOCO 3 -->
+        <section class="block-card" id="bloco-3" data-block-id="3">
+          <div class="block-header">
+            <div>
+              <span class="block-pill">Bloco 3</span>
+              <h2 class="block-title">ASSERTIVIDADE DO FEEDBACK</h2>
+            </div>
+            <div class="block-status-icon" id="status-3">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+          </div>
+          <div class="block-body">
+
+            <!-- Q9 -->
+            <div class="question-item" data-qid="q9">
+              <div class="question-header">
+                <span class="question-num">9</span>
+                <span class="question-text">O feedback recebido após a simulação foi coerente com a sua atuação?</span>
+                <span class="question-badge">Escala 1–5</span>
+              </div>
+              <div class="scale-5-group">
+                <div class="scale-5-grid">
+                  <label class="scale-option"><input type="radio" name="q9" value="1"><div class="scale-tile"><span class="scale-digit">1</span><span class="scale-desc">Nada coerente</span></div></label>
+                  <label class="scale-option"><input type="radio" name="q9" value="2"><div class="scale-tile"><span class="scale-digit">2</span><span class="scale-desc">Pouco</span></div></label>
+                  <label class="scale-option"><input type="radio" name="q9" value="3"><div class="scale-tile"><span class="scale-digit">3</span><span class="scale-desc">Neutro</span></div></label>
+                  <label class="scale-option"><input type="radio" name="q9" value="4"><div class="scale-tile"><span class="scale-digit">4</span><span class="scale-desc">Coerente</span></div></label>
+                  <label class="scale-option"><input type="radio" name="q9" value="5"><div class="scale-tile"><span class="scale-digit">5</span><span class="scale-desc">Muito coerente</span></div></label>
+                </div>
+                <div class="scale-legend">
+                  <span>1 = Nada coerente</span>
+                  <span>5 = Muito coerente</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Q10 -->
+            <div class="question-item" data-qid="q10">
+              <div class="question-header">
+                <span class="question-num">10</span>
+                <span class="question-text">Você considera que o score recebido representou adequadamente sua performance?</span>
+                <span class="question-badge">Escala 1–5</span>
+              </div>
+              <div class="scale-5-group">
+                <div class="scale-5-grid">
+                  <label class="scale-option"><input type="radio" name="q10" value="1"><div class="scale-tile"><span class="scale-digit">1</span><span class="scale-desc">Discordo totalmente</span></div></label>
+                  <label class="scale-option"><input type="radio" name="q10" value="2"><div class="scale-tile"><span class="scale-digit">2</span><span class="scale-desc">Discordo</span></div></label>
+                  <label class="scale-option"><input type="radio" name="q10" value="3"><div class="scale-tile"><span class="scale-digit">3</span><span class="scale-desc">Neutro</span></div></label>
+                  <label class="scale-option"><input type="radio" name="q10" value="4"><div class="scale-tile"><span class="scale-digit">4</span><span class="scale-desc">Concordo</span></div></label>
+                  <label class="scale-option"><input type="radio" name="q10" value="5"><div class="scale-tile"><span class="scale-digit">5</span><span class="scale-desc">Concordo totalmente</span></div></label>
+                </div>
+                <div class="scale-legend">
+                  <span>1 = Discordo totalmente</span>
+                  <span>5 = Concordo totalmente</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Q11 -->
+            <div class="question-item" data-qid="q11">
+              <div class="question-header">
+                <span class="question-num">11</span>
+                <span class="question-text">O feedback ajudou você a identificar pontos concretos de melhoria?</span>
+                <span class="question-badge">Escala 1–5</span>
+              </div>
+              <div class="scale-5-group">
+                <div class="scale-5-grid">
+                  <label class="scale-option"><input type="radio" name="q11" value="1"><div class="scale-tile"><span class="scale-digit">1</span><span class="scale-desc">Não ajudou</span></div></label>
+                  <label class="scale-option"><input type="radio" name="q11" value="2"><div class="scale-tile"><span class="scale-digit">2</span><span class="scale-desc">Pouco</span></div></label>
+                  <label class="scale-option"><input type="radio" name="q11" value="3"><div class="scale-tile"><span class="scale-digit">3</span><span class="scale-desc">Neutro</span></div></label>
+                  <label class="scale-option"><input type="radio" name="q11" value="4"><div class="scale-tile"><span class="scale-digit">4</span><span class="scale-desc">Ajudou</span></div></label>
+                  <label class="scale-option"><input type="radio" name="q11" value="5"><div class="scale-tile"><span class="scale-digit">5</span><span class="scale-desc">Ajudou muito</span></div></label>
+                </div>
+                <div class="scale-legend">
+                  <span>1 = Não ajudou</span>
+                  <span>5 = Ajudou muito</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- BLOCO 4 -->
+        <section class="block-card" id="bloco-4" data-block-id="4">
+          <div class="block-header">
+            <div>
+              <span class="block-pill">Bloco 4</span>
+              <h2 class="block-title">CALIBRAGEM DA PLATAFORMA</h2>
+            </div>
+            <div class="block-status-icon" id="status-4">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+          </div>
+          <div class="block-body">
+
+            <!-- Q12 -->
+            <div class="question-item" data-qid="q12">
+              <div class="question-header">
+                <span class="question-num">12</span>
+                <span class="question-text">Como você avalia a capacidade da plataforma de reconhecer diferentes formas de responder adequadamente a uma mesma situação?</span>
+                <span class="question-badge">Escala 1–5</span>
+              </div>
+              <div class="scale-5-group">
+                <div class="scale-5-grid">
+                  <label class="scale-option"><input type="radio" name="q12" value="1"><div class="scale-tile"><span class="scale-digit">1</span><span class="scale-desc">Muito ruim</span></div></label>
+                  <label class="scale-option"><input type="radio" name="q12" value="2"><div class="scale-tile"><span class="scale-digit">2</span><span class="scale-desc">Ruim</span></div></label>
+                  <label class="scale-option"><input type="radio" name="q12" value="3"><div class="scale-tile"><span class="scale-digit">3</span><span class="scale-desc">Regular</span></div></label>
+                  <label class="scale-option"><input type="radio" name="q12" value="4"><div class="scale-tile"><span class="scale-digit">4</span><span class="scale-desc">Boa</span></div></label>
+                  <label class="scale-option"><input type="radio" name="q12" value="5"><div class="scale-tile"><span class="scale-digit">5</span><span class="scale-desc">Excelente</span></div></label>
+                </div>
+                <div class="scale-legend">
+                  <span>1 = Muito ruim</span>
+                  <span>5 = Excelente</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Q13 -->
+            <div class="question-item" data-qid="q13">
+              <div class="question-header">
+                <span class="question-num">13</span>
+                <span class="question-text">Com que frequência você discordou da avaliação feita pela plataforma?</span>
+                <span class="question-badge">Escolha única</span>
+              </div>
+              <div class="choice-list">
+                <label class="choice-card"><input type="radio" name="q13" value="Nunca"><div class="choice-body"><div class="choice-circle"><span class="choice-dot"></span></div><span class="choice-text">Nunca</span></div></label>
+                <label class="choice-card"><input type="radio" name="q13" value="Raramente"><div class="choice-body"><div class="choice-circle"><span class="choice-dot"></span></div><span class="choice-text">Raramente</span></div></label>
+                <label class="choice-card"><input type="radio" name="q13" value="Algumas vezes"><div class="choice-body"><div class="choice-circle"><span class="choice-dot"></span></div><span class="choice-text">Algumas vezes</span></div></label>
+                <label class="choice-card"><input type="radio" name="q13" value="Frequentemente"><div class="choice-body"><div class="choice-circle"><span class="choice-dot"></span></div><span class="choice-text">Frequentemente</span></div></label>
+                <label class="choice-card"><input type="radio" name="q13" value="Sempre"><div class="choice-body"><div class="choice-circle"><span class="choice-dot"></span></div><span class="choice-text">Sempre</span></div></label>
+              </div>
+            </div>
+
+            <!-- Q14 -->
+            <div class="question-item" data-qid="q14">
+              <div class="question-header">
+                <span class="question-num">14</span>
+                <span class="question-text">Você identificou alguma situação em que considerou sua resposta adequada, mas a plataforma avaliou de forma diferente?</span>
+                <span class="question-badge">Escolha única</span>
+              </div>
+              <div class="choice-list">
+                <label class="choice-card"><input type="radio" name="q14" value="Não"><div class="choice-body"><div class="choice-circle"><span class="choice-dot"></span></div><span class="choice-text">Não</span></div></label>
+                <label class="choice-card"><input type="radio" name="q14" value="Sim, uma vez"><div class="choice-body"><div class="choice-circle"><span class="choice-dot"></span></div><span class="choice-text">Sim, uma vez</span></div></label>
+                <label class="choice-card"><input type="radio" name="q14" value="Sim, algumas vezes"><div class="choice-body"><div class="choice-circle"><span class="choice-dot"></span></div><span class="choice-text">Sim, algumas vezes</span></div></label>
+                <label class="choice-card"><input type="radio" name="q14" value="Sim, frequentemente"><div class="choice-body"><div class="choice-circle"><span class="choice-dot"></span></div><span class="choice-text">Sim, frequentemente</span></div></label>
+              </div>
+            </div>
+
+            <!-- Q15 -->
+            <div class="question-item" data-qid="q15">
+              <div class="question-header">
+                <span class="question-num">15</span>
+                <span class="question-text">O que você mudaria na forma como a plataforma avalia ou fornece feedback?</span>
+                <span class="question-badge">Resposta aberta</span>
+              </div>
+              <div class="textarea-wrap">
+                <textarea class="form-textarea" name="q15" id="q15" placeholder="Compartilhe suas ideias sobre calibragem de pontuação, clareza ou formato do feedback..."></textarea>
+                <div class="textarea-hint">Opcional</div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- BLOCO 5 -->
+        <section class="block-card" id="bloco-5" data-block-id="5">
+          <div class="block-header">
+            <div>
+              <span class="block-pill">Bloco 5</span>
+              <h2 class="block-title">EVOLUÇÃO E APRENDIZADO</h2>
+            </div>
+            <div class="block-status-icon" id="status-5">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+          </div>
+          <div class="block-body">
+
+            <!-- Q16 -->
+            <div class="question-item" data-qid="q16">
+              <div class="question-header">
+                <span class="question-num">16</span>
+                <span class="question-text">O uso da plataforma ajudou você a identificar seus pontos fortes e pontos de melhoria?</span>
+                <span class="question-badge">Escala 1–5</span>
+              </div>
+              <div class="scale-5-group">
+                <div class="scale-5-grid">
+                  <label class="scale-option"><input type="radio" name="q16" value="1"><div class="scale-tile"><span class="scale-digit">1</span><span class="scale-desc">Discordo totalmente</span></div></label>
+                  <label class="scale-option"><input type="radio" name="q16" value="2"><div class="scale-tile"><span class="scale-digit">2</span><span class="scale-desc">Discordo</span></div></label>
+                  <label class="scale-option"><input type="radio" name="q16" value="3"><div class="scale-tile"><span class="scale-digit">3</span><span class="scale-desc">Neutro</span></div></label>
+                  <label class="scale-option"><input type="radio" name="q16" value="4"><div class="scale-tile"><span class="scale-digit">4</span><span class="scale-desc">Concordo</span></div></label>
+                  <label class="scale-option"><input type="radio" name="q16" value="5"><div class="scale-tile"><span class="scale-digit">5</span><span class="scale-desc">Concordo totalmente</span></div></label>
+                </div>
+                <div class="scale-legend">
+                  <span>1 = Discordo totalmente</span>
+                  <span>5 = Concordo totalmente</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Q17 -->
+            <div class="question-item" data-qid="q17">
+              <div class="question-header">
+                <span class="question-num">17</span>
+                <span class="question-text">Você percebeu evolução na sua performance entre as primeiras e as últimas simulações?</span>
+                <span class="question-badge">Escolha única</span>
+              </div>
+              <div class="choice-list">
+                <label class="choice-card"><input type="radio" name="q17" value="Sim, evolução significativa"><div class="choice-body"><div class="choice-circle"><span class="choice-dot"></span></div><span class="choice-text">Sim, evolução significativa</span></div></label>
+                <label class="choice-card"><input type="radio" name="q17" value="Sim, alguma evolução"><div class="choice-body"><div class="choice-circle"><span class="choice-dot"></span></div><span class="choice-text">Sim, alguma evolução</span></div></label>
+                <label class="choice-card"><input type="radio" name="q17" value="Pouca evolução"><div class="choice-body"><div class="choice-circle"><span class="choice-dot"></span></div><span class="choice-text">Pouca evolução</span></div></label>
+                <label class="choice-card"><input type="radio" name="q17" value="Não percebi evolução"><div class="choice-body"><div class="choice-circle"><span class="choice-dot"></span></div><span class="choice-text">Não percebi evolução</span></div></label>
+                <label class="choice-card"><input type="radio" name="q17" value="Não consigo avaliar"><div class="choice-body"><div class="choice-circle"><span class="choice-dot"></span></div><span class="choice-text">Não consigo avaliar</span></div></label>
+              </div>
+            </div>
+
+            <!-- Q18 -->
+            <div class="question-item" data-qid="q18">
+              <div class="question-header">
+                <span class="question-num">18</span>
+                <span class="question-text">Você continuaria utilizando a plataforma se novos cenários fossem disponibilizados?</span>
+                <span class="question-badge">Escolha única</span>
+              </div>
+              <div class="choice-list">
+                <label class="choice-card"><input type="radio" name="q18" value="Sim, com certeza"><div class="choice-body"><div class="choice-circle"><span class="choice-dot"></span></div><span class="choice-text">Sim, com certeza</span></div></label>
+                <label class="choice-card"><input type="radio" name="q18" value="Sim, provavelmente"><div class="choice-body"><div class="choice-circle"><span class="choice-dot"></span></div><span class="choice-text">Sim, provavelmente</span></div></label>
+                <label class="choice-card"><input type="radio" name="q18" value="Talvez"><div class="choice-body"><div class="choice-circle"><span class="choice-dot"></span></div><span class="choice-text">Talvez</span></div></label>
+                <label class="choice-card"><input type="radio" name="q18" value="Provavelmente não"><div class="choice-body"><div class="choice-circle"><span class="choice-dot"></span></div><span class="choice-text">Provavelmente não</span></div></label>
+                <label class="choice-card"><input type="radio" name="q18" value="Não"><div class="choice-body"><div class="choice-circle"><span class="choice-dot"></span></div><span class="choice-text">Não</span></div></label>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- BLOCO 6 -->
+        <section class="block-card" id="bloco-6" data-block-id="6">
+          <div class="block-header">
+            <div>
+              <span class="block-pill">Bloco 6</span>
+              <h2 class="block-title">RECOMENDAÇÃO</h2>
+            </div>
+            <div class="block-status-icon" id="status-6">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+          </div>
+          <div class="block-body">
+
+            <!-- Q19 -->
+            <div class="question-item" data-qid="q19">
+              <div class="question-header">
+                <span class="question-num">19</span>
+                <span class="question-text">De 0 a 10, o quanto você recomendaria a plataforma para outro colaborador?</span>
+                <span class="question-badge">NPS (Net Promoter Score)</span>
+              </div>
+              <div class="nps-box-group">
+                <div class="nps-grid">
+                  <label class="nps-item detractor"><input type="radio" name="q19" value="0"><div class="nps-tile"><span class="nps-score">0</span></div></label>
+                  <label class="nps-item detractor"><input type="radio" name="q19" value="1"><div class="nps-tile"><span class="nps-score">1</span></div></label>
+                  <label class="nps-item detractor"><input type="radio" name="q19" value="2"><div class="nps-tile"><span class="nps-score">2</span></div></label>
+                  <label class="nps-item detractor"><input type="radio" name="q19" value="3"><div class="nps-tile"><span class="nps-score">3</span></div></label>
+                  <label class="nps-item detractor"><input type="radio" name="q19" value="4"><div class="nps-tile"><span class="nps-score">4</span></div></label>
+                  <label class="nps-item detractor"><input type="radio" name="q19" value="5"><div class="nps-tile"><span class="nps-score">5</span></div></label>
+                  <label class="nps-item detractor"><input type="radio" name="q19" value="6"><div class="nps-tile"><span class="nps-score">6</span></div></label>
+                  <label class="nps-item passive"><input type="radio" name="q19" value="7"><div class="nps-tile"><span class="nps-score">7</span></div></label>
+                  <label class="nps-item passive"><input type="radio" name="q19" value="8"><div class="nps-tile"><span class="nps-score">8</span></div></label>
+                  <label class="nps-item promoter"><input type="radio" name="q19" value="9"><div class="nps-tile"><span class="nps-score">9</span></div></label>
+                  <label class="nps-item promoter"><input type="radio" name="q19" value="10"><div class="nps-tile"><span class="nps-score">10</span></div></label>
+                </div>
+
+                <div class="nps-labels">
+                  <span class="label-detractor">0 = Não recomendaria</span>
+                  <span class="label-passive">7–8 = Neutro</span>
+                  <span class="label-promoter">10 = Recomendaria com certeza</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- BLOCO 7 -->
+        <section class="block-card" id="bloco-7" data-block-id="7">
+          <div class="block-header">
+            <div>
+              <span class="block-pill">Bloco 7</span>
+              <h2 class="block-title">FEEDBACK FINAL</h2>
+            </div>
+            <div class="block-status-icon" id="status-7">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+          </div>
+          <div class="block-body">
+
+            <!-- Q20 -->
+            <div class="question-item" data-qid="q20">
+              <div class="question-header">
+                <span class="question-num">20</span>
+                <span class="question-text">Qual foi o principal ponto positivo da plataforma?</span>
+                <span class="question-badge">Resposta aberta</span>
+              </div>
+              <div class="textarea-wrap">
+                <textarea class="form-textarea" name="q20" id="q20" placeholder="Conte-nos o que você mais gostou ou o que funcionou especialmente bem..."></textarea>
+                <div class="textarea-hint">Opcional</div>
+              </div>
+            </div>
+
+            <!-- Q21 -->
+            <div class="question-item" data-qid="q21">
+              <div class="question-header">
+                <span class="question-num">21</span>
+                <span class="question-text">Qual foi o principal ponto que deveria ser melhorado?</span>
+                <span class="question-badge">Resposta aberta</span>
+              </div>
+              <div class="textarea-wrap">
+                <textarea class="form-textarea" name="q21" id="q21" placeholder="Destaque pontos de atrito, lentidão ou aspectos a aperfeiçoar..."></textarea>
+                <div class="textarea-hint">Opcional</div>
+              </div>
+            </div>
+
+            <!-- Q22 -->
+            <div class="question-item" data-qid="q22">
+              <div class="question-header">
+                <span class="question-num">22</span>
+                <span class="question-text">Se você pudesse fazer apenas uma mudança na plataforma, qual seria?</span>
+                <span class="question-badge">Resposta aberta</span>
+              </div>
+              <div class="textarea-wrap">
+                <textarea class="form-textarea" name="q22" id="q22" placeholder="Qual seria a sua sugestão número 1 de prioridade?"></textarea>
+                <div class="textarea-hint">Opcional</div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+      </form>
+    </main>
+  </div>
+
+  <!-- Bottom Floating Bar -->
+  <footer class="bottom-bar">
+    <div class="bottom-bar-container">
+      <div class="autosave-notice">
+        <span class="status-bulb"></span>
+        <span id="saveStatus">Rascunho salvo automaticamente</span>
+      </div>
+
+      <div class="actions-cluster">
+        <button type="button" class="btn btn-outline" id="printBtn" title="Imprimir ou salvar PDF">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          Imprimir / PDF
+        </button>
+        <button type="button" class="btn btn-submit" id="submitBtn">
+          <span>Enviar Avaliação</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </button>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Submission Modal -->
+  <div class="modal-backdrop" id="successModal">
+    <div class="modal-box">
+      <div class="modal-icon-wrap">✓</div>
+      <h3 class="modal-heading">Pesquisa Concluída!</h3>
+      <p class="modal-paragraph">
+        Obrigado por participar do piloto MetLife. Suas contribuições serão essenciais para o refinamento da plataforma.
+      </p>
+
+      <div class="modal-stats">
+        <div class="modal-stat-line">
+          <span>Status do Envio:</span>
+          <strong style="color: #10b981;">Gravado com Sucesso</strong>
+        </div>
+        <div class="modal-stat-line">
+          <span>Perguntas Respondidas:</span>
+          <strong id="modalAnsweredCount">0 de 22</strong>
+        </div>
+        <div class="modal-stat-line">
+          <span>Nota NPS:</span>
+          <strong id="modalNpsScore">-</strong>
+        </div>
+        <div class="modal-stat-line">
+          <span>Data / Horário:</span>
+          <strong id="modalTimestamp">-</strong>
+        </div>
+      </div>
+
+      <div class="modal-buttons">
+        <button type="button" class="btn btn-outline" id="downloadJsonBtn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Baixar JSON
+        </button>
+        <button type="button" class="btn btn-outline" id="downloadCsvBtn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          Baixar CSV
+        </button>
+        <button type="button" class="btn btn-submit" id="closeModalBtn">
+          Fechar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const STORAGE_KEY = 'metlife_pilot_survey_data';
+      const form = document.getElementById('surveyForm');
+      const progressBar = document.getElementById('progressBar');
+      const progressPercent = document.getElementById('progressPercent');
+      const progressCount = document.getElementById('progressCount');
+      const saveStatus = document.getElementById('saveStatus');
+      const totalQuestions = 22;
+
+      const blockQuestions = {
+        1: ['q1', 'q2', 'q3', 'q4'],
+        2: ['q5', 'q6', 'q7', 'q8'],
+        3: ['q9', 'q10', 'q11'],
+        4: ['q12', 'q13', 'q14', 'q15'],
+        5: ['q16', 'q17', 'q18'],
+        6: ['q19'],
+        7: ['q20', 'q21', 'q22']
+      };
+
+      // Load Saved
+      function loadDraft() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (!raw) return;
+          const data = JSON.parse(raw);
+          Object.keys(data).forEach(key => {
+            const field = form.elements[key];
+            if (!field) return;
+            if (field instanceof RadioNodeList || (field.length && field[0].type === 'radio')) {
+              for (const radio of field) {
+                if (radio.value === data[key]) {
+                  radio.checked = true;
+                }
+              }
+            } else if (field.tagName === 'TEXTAREA' || field.tagName === 'INPUT') {
+              field.value = data[key];
+            }
+          });
+        } catch (err) {
+          console.error('Erro ao ler rascunho:', err);
+        }
+      }
+
+      function getFormData() {
+        const formData = new FormData(form);
+        const data = {};
+        for (let [k, v] of formData.entries()) {
+          if (typeof v === 'string' && v.trim() !== '') {
+            data[k] = v.trim();
+          }
+        }
+        return data;
+      }
+
+      function saveDraft() {
+        const data = getFormData();
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        const now = new Date();
+        const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        saveStatus.textContent = `Rascunho salvo às ${timeStr}`;
+      }
+
+      function updateProgress() {
+        const data = getFormData();
+        let answered = 0;
+        for (let i = 1; i <= totalQuestions; i++) {
+          if (data['q' + i] && data['q' + i].trim() !== '') {
+            answered++;
+          }
+        }
+
+        const pct = Math.round((answered / totalQuestions) * 100);
+        progressBar.style.width = pct + '%';
+        progressPercent.textContent = pct + '%';
+        progressCount.textContent = `${answered}/${totalQuestions}`;
+
+        // Update block count badges
+        Object.entries(blockQuestions).forEach(([blockNum, qList]) => {
+          let bAnswered = 0;
+          qList.forEach(qId => {
+            if (data[qId] && data[qId].trim() !== '') bAnswered++;
+          });
+
+          const badge = document.getElementById('badge-' + blockNum);
+          if (badge) badge.textContent = `${bAnswered}/${qList.length}`;
+
+          const isComplete = (bAnswered === qList.length);
+          const sidebarItem = document.querySelector(`.sidebar-item[data-block="${blockNum}"]`);
+          const blockCard = document.getElementById('bloco-' + blockNum);
+
+          if (sidebarItem) sidebarItem.classList.toggle('completed', isComplete);
+          if (blockCard) blockCard.classList.toggle('is-complete', isComplete);
+        });
+      }
+
+      form.addEventListener('change', () => {
+        saveDraft();
+        updateProgress();
+      });
+
+      form.addEventListener('input', (e) => {
+        if (e.target.tagName === 'TEXTAREA') {
+          saveDraft();
+          updateProgress();
+        }
+      });
+
+      // Clear button
+      document.getElementById('clearBtn').addEventListener('click', () => {
+        if (confirm('Deseja realmente limpar todas as respostas do formulário?')) {
+          localStorage.removeItem(STORAGE_KEY);
+          form.reset();
+          updateProgress();
+          saveStatus.textContent = 'Formulário limpo';
+        }
+      });
+
+      // Print button
+      document.getElementById('printBtn').addEventListener('click', () => {
+        window.print();
+      });
+
+      // Active sidebar section tracker
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const id = entry.target.getAttribute('data-block-id');
+            document.querySelectorAll('.sidebar-item').forEach(item => {
+              item.classList.toggle('active', item.getAttribute('data-block') === id);
+            });
+          }
+        });
+      }, { rootMargin: '-10% 0px -70% 0px' });
+
+      document.querySelectorAll('.block-card').forEach(card => observer.observe(card));
+
+      // Submission
+      const modal = document.getElementById('successModal');
+      const submitBtn = document.getElementById('submitBtn');
+      let submissionPayload = null;
+
+      submitBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const data = getFormData();
+        const count = Object.keys(data).length;
+
+        if (count === 0) {
+          alert('Por favor, responda ao menos algumas perguntas antes de enviar.');
+          return;
+        }
+
+        if (count < 14) {
+          const proceed = confirm(`Você respondeu ${count} de 22 perguntas. Deseja finalizar o envio mesmo assim?`);
+          if (!proceed) return;
+        }
+
+        submissionPayload = {
+          pesquisa: 'METLIFE — PESQUISA DE AVALIAÇÃO DO PILOTO',
+          timestamp: new Date().toISOString(),
+          totalPerguntas: totalQuestions,
+          respondidas: count,
+          respostas: data
+        };
+
+        document.getElementById('modalAnsweredCount').textContent = `${count} de ${totalQuestions}`;
+        document.getElementById('modalNpsScore').textContent = data.q19 !== undefined ? `${data.q19} / 10` : 'Não informado';
+        document.getElementById('modalTimestamp').textContent = new Date().toLocaleString('pt-BR');
+
+        modal.classList.add('active');
+      });
+
+      document.getElementById('closeModalBtn').addEventListener('click', () => {
+        modal.classList.remove('active');
+      });
+
+      // Download JSON
+      document.getElementById('downloadJsonBtn').addEventListener('click', () => {
+        const payload = submissionPayload || { respostas: getFormData() };
+        const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `MetLife_Pesquisa_${new Date().toISOString().slice(0, 10)}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+      });
+
+      // Download CSV
+      document.getElementById('downloadCsvBtn').addEventListener('click', () => {
+        const data = getFormData();
+        const rows = [['Questão', 'ID', 'Resposta']];
+        for (let i = 1; i <= totalQuestions; i++) {
+          const qId = 'q' + i;
+          const qElem = document.querySelector(`[data-qid="${qId}"] .question-text`);
+          const text = qElem ? qElem.textContent.replace(/"/g, '""') : qId;
+          const ans = (data[qId] || '').replace(/"/g, '""');
+          rows.push([`"${text}"`, `"${qId}"`, `"${ans}"`]);
+        }
+        const csvContent = '\uFEFF' + rows.map(r => r.join(';')).join('\n');
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `MetLife_Pesquisa_${new Date().toISOString().slice(0, 10)}.csv`;
+        a.click();
+        URL.revokeObjectURL(url);
+      });
+
+      // Init
+      loadDraft();
+      updateProgress();
+    });
+  </script>
+</body>
+</html>

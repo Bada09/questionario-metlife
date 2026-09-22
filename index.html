@@ -1999,29 +1999,62 @@
           respostas: respostas
         };
 
-        // Envio para a planilha
+        // Envio para a planilha — com novas tentativas automáticas.
+        // O ID evita gravar a mesma resposta duas vezes se uma tentativa chegar mas a resposta se perder.
+        const sig = JSON.stringify({ nome, agencia, respostas });
+        if (!window.__envioId || window.__envioSig !== sig) {
+          window.__envioId = Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 10);
+          window.__envioSig = sig;
+        }
+        submissionPayload.id = window.__envioId;
+
         submitBtn.disabled = true;
         submitLabel.textContent = 'Enviando…';
         let enviado = false;
         let motivo = '';
-        try {
-          if (!SCRIPT_URL || SCRIPT_URL.indexOf('/exec') === -1) throw new Error('URL do script não configurada no arquivo (SCRIPT_URL)');
-          const res = await fetch(SCRIPT_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify(submissionPayload)
-          });
-          const txt = await res.text();
-          let out = {};
-          try { out = JSON.parse(txt); } catch (_) {
-            throw new Error(/<html|<!DOCTYPE/i.test(txt) ? 'o script respondeu com uma página do Google em vez de dados (acesso não está como "Qualquer pessoa" ou URL errada)' : 'resposta inesperada do script');
-          }
-          enviado = res.ok && out.ok === true;
-          if (!enviado) motivo = out.erro || ('HTTP ' + res.status);
-        } catch (err) {
-          console.error('Falha no envio:', err);
-          motivo = err.message === 'Failed to fetch' || err.name === 'TypeError' ? 'sem conexão com o script (URL errada, implantação arquivada ou sem internet)' : err.message;
+        const body = JSON.stringify(submissionPayload);
+        const espera = ms => new Promise(r => setTimeout(r, ms));
+
+        async function tentativa() {
+          const ctrl = new AbortController();
+          const timer = setTimeout(() => ctrl.abort(), 25000);
+          try {
+            const res = await fetch(SCRIPT_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body, signal: ctrl.signal, cache: 'no-store', redirect: 'follow' });
+            const txt = await res.text();
+            let out;
+            try { out = JSON.parse(txt); } catch (_) {
+              return { ok: false, rede: false, motivo: /<html|<!DOCTYPE/i.test(txt) ? 'o script respondeu com uma página do Google em vez de dados' : 'resposta inesperada do script (HTTP ' + res.status + ')' };
+            }
+            if (res.ok && out.ok === true) return { ok: true };
+            return { ok: false, rede: false, motivo: out.erro || ('HTTP ' + res.status) };
+          } catch (err) {
+            return { ok: false, rede: true, motivo: err.name === 'AbortError' ? 'o script demorou demais para responder' : 'sem conexão com o script' };
+          } finally { clearTimeout(timer); }
         }
+
+        if (!SCRIPT_URL || SCRIPT_URL.indexOf('/exec') === -1) {
+          motivo = 'URL do script não configurada no arquivo (SCRIPT_URL)';
+        } else {
+          const pausas = [0, 1500, 3500];
+          let ultimo = null;
+          for (let i = 0; i < pausas.length && !enviado; i++) {
+            if (pausas[i]) { submitLabel.textContent = `Enviando… (tentativa ${i + 1})`; await espera(pausas[i]); }
+            ultimo = await tentativa();
+            enviado = ultimo.ok;
+            // Erro do próprio script (não de rede): não adianta repetir
+            if (!ultimo.ok && !ultimo.rede && !/página do Google|inesperada|Lock|tempo|timed out|Service/i.test(ultimo.motivo)) break;
+          }
+          if (!enviado && ultimo && ultimo.rede) {
+            // Último recurso: envio "cego". O navegador não deixa ler a resposta,
+            // mas se ele completar, a requisição chegou ao Google.
+            try {
+              await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body, cache: 'no-store' });
+              enviado = true;
+            } catch (_) { /* sem internet */ }
+          }
+          if (!enviado) motivo = ultimo ? ultimo.motivo : 'falha desconhecida';
+        }
+        if (!enviado) console.error('Falha no envio:', motivo);
         submitBtn.disabled = false;
         submitLabel.textContent = 'Enviar Avaliação';
 

@@ -1759,34 +1759,7 @@
         Obrigado por participar do piloto MetLife. Suas contribuições serão essenciais para o refinamento da plataforma.
       </p>
 
-      <div class="modal-stats">
-        <div class="modal-stat-line">
-          <span>Status do Envio:</span>
-          <strong id="modalSendStatus" style="color: #10b981;">-</strong>
-        </div>
-        <div class="modal-stat-line">
-          <span>Perguntas Respondidas:</span>
-          <strong id="modalAnsweredCount">0 de 22</strong>
-        </div>
-        <div class="modal-stat-line">
-          <span>Nota NPS:</span>
-          <strong id="modalNpsScore">-</strong>
-        </div>
-        <div class="modal-stat-line">
-          <span>Data / Horário:</span>
-          <strong id="modalTimestamp">-</strong>
-        </div>
-      </div>
-
       <div class="modal-buttons">
-        <button type="button" class="btn btn-outline" id="downloadJsonBtn">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          Baixar JSON
-        </button>
-        <button type="button" class="btn btn-outline" id="downloadCsvBtn">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-          Baixar CSV
-        </button>
         <button type="button" class="btn btn-submit" id="closeModalBtn">
           Fechar
         </button>
@@ -1800,7 +1773,7 @@
       // ============================================================
       // CONFIGURAÇÃO — cole aqui a URL do Web App do Google Apps Script
       // (termina em /exec). Veja o guia de configuração.
-      const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxNJ-108mcxw3jab5XjcgyCrHkwZ4YlvmJoNR5bhkOl5IKmIo38F37iNG4Oiz6xq2kS9Q/exec';
+      const SCRIPT_URL = 'COLE_AQUI_A_URL_DO_WEB_APP';
       // ============================================================
       const STORAGE_KEY = 'metlife_pilot_survey_data';
       const form = document.getElementById('surveyForm');
@@ -2016,67 +1989,26 @@
         submitBtn.disabled = false;
         submitLabel.textContent = 'Enviar Avaliação';
 
-        const statusEl = document.getElementById('modalSendStatus');
         const headingEl = document.querySelector('#successModal .modal-heading');
         const paraEl = document.querySelector('#successModal .modal-paragraph');
         if (enviado) {
-          statusEl.textContent = 'Enviado com sucesso';
-          statusEl.style.color = '#10b981';
-          headingEl.textContent = 'Pesquisa Concluída!';
-          paraEl.textContent = `Obrigado, ${nome.split(' ')[0]}! Suas contribuições serão essenciais para o refinamento da plataforma.`;
+          document.querySelector('#successModal .modal-icon-wrap').textContent = '✓';
+          headingEl.textContent = 'Avaliação enviada!';
+          paraEl.textContent = `Obrigado pela sua participação, ${nome.split(' ')[0]}! Recebemos suas respostas com sucesso. Sua opinião é essencial para o refinamento da plataforma.`;
           try { localStorage.removeItem(STORAGE_KEY); } catch (_) {}
           saveStatus.textContent = 'Avaliação enviada';
         } else {
-          statusEl.textContent = 'Não foi possível enviar';
-          statusEl.style.color = '#ef4444';
           headingEl.textContent = 'Envio não concluído';
+          document.querySelector('#successModal .modal-icon-wrap').textContent = '!';
           paraEl.textContent = 'Suas respostas continuam salvas neste navegador. Verifique a conexão e tente enviar novamente em instantes.';
         }
 
-        document.getElementById('modalAnsweredCount').textContent = `${count} de ${totalQuestions}`;
-        document.getElementById('modalNpsScore').textContent = data.q19 !== undefined ? `${data.q19} / 10` : 'Não informado';
-        document.getElementById('modalTimestamp').textContent = new Date().toLocaleString('pt-BR');
 
         modal.classList.add('active');
       });
 
       document.getElementById('closeModalBtn').addEventListener('click', () => {
         modal.classList.remove('active');
-      });
-
-      // Download JSON
-      document.getElementById('downloadJsonBtn').addEventListener('click', () => {
-        const payload = submissionPayload || { respostas: getFormData() };
-        const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `MetLife_Pesquisa_${new Date().toISOString().slice(0, 10)}.json`;
-        a.click();
-        URL.revokeObjectURL(url);
-      });
-
-      // Download CSV
-      document.getElementById('downloadCsvBtn').addEventListener('click', () => {
-        const data = getFormData();
-        const rows = [['Questão', 'ID', 'Resposta'],
-          ['"Nome"', '"nome"', `"${(data.nome || '').replace(/"/g, '""')}"`],
-          ['"Agência"', '"agencia"', `"${(data.agencia || '').replace(/"/g, '""')}"`]];
-        for (let i = 1; i <= totalQuestions; i++) {
-          const qId = 'q' + i;
-          const qElem = document.querySelector(`[data-qid="${qId}"] .question-text`);
-          const text = qElem ? qElem.textContent.replace(/"/g, '""') : qId;
-          const ans = (data[qId] || '').replace(/"/g, '""');
-          rows.push([`"${text}"`, `"${qId}"`, `"${ans}"`]);
-        }
-        const csvContent = '\uFEFF' + rows.map(r => r.join(';')).join('\n');
-        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `MetLife_Pesquisa_${new Date().toISOString().slice(0, 10)}.csv`;
-        a.click();
-        URL.revokeObjectURL(url);
       });
 
       // Init

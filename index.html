@@ -1768,6 +1768,7 @@
       <p class="modal-paragraph">
         Obrigado por participar do piloto MetLife. Suas contribuições serão essenciais para o refinamento da plataforma.
       </p>
+      <p id="modalDetail" style="display:none;margin:-4px 0 16px;font-size:12px;color:#94a3b8;word-break:break-word"></p>
 
       <div class="modal-buttons">
         <button type="button" class="btn btn-submit" id="closeModalBtn">
@@ -2002,23 +2003,32 @@
         submitBtn.disabled = true;
         submitLabel.textContent = 'Enviando…';
         let enviado = false;
+        let motivo = '';
         try {
-          if (!SCRIPT_URL || SCRIPT_URL.indexOf('/exec') === -1) throw new Error('URL de envio não configurada');
+          if (!SCRIPT_URL || SCRIPT_URL.indexOf('/exec') === -1) throw new Error('URL do script não configurada no arquivo (SCRIPT_URL)');
           const res = await fetch(SCRIPT_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
             body: JSON.stringify(submissionPayload)
           });
-          const out = await res.json().catch(() => ({}));
+          const txt = await res.text();
+          let out = {};
+          try { out = JSON.parse(txt); } catch (_) {
+            throw new Error(/<html|<!DOCTYPE/i.test(txt) ? 'o script respondeu com uma página do Google em vez de dados (acesso não está como "Qualquer pessoa" ou URL errada)' : 'resposta inesperada do script');
+          }
           enviado = res.ok && out.ok === true;
+          if (!enviado) motivo = out.erro || ('HTTP ' + res.status);
         } catch (err) {
           console.error('Falha no envio:', err);
+          motivo = err.message === 'Failed to fetch' || err.name === 'TypeError' ? 'sem conexão com o script (URL errada, implantação arquivada ou sem internet)' : err.message;
         }
         submitBtn.disabled = false;
         submitLabel.textContent = 'Enviar Avaliação';
 
         const headingEl = document.querySelector('#successModal .modal-heading');
         const paraEl = document.querySelector('#successModal .modal-paragraph');
+        const detailEl = document.getElementById('modalDetail');
+        detailEl.style.display = 'none';
         if (enviado) {
           document.querySelector('#successModal .modal-icon-wrap').textContent = '✓';
           headingEl.textContent = 'Avaliação enviada!';
@@ -2029,6 +2039,8 @@
           headingEl.textContent = 'Envio não concluído';
           document.querySelector('#successModal .modal-icon-wrap').textContent = '!';
           paraEl.textContent = 'Suas respostas continuam salvas neste navegador. Verifique a conexão e tente enviar novamente em instantes.';
+          detailEl.textContent = 'Detalhe técnico: ' + motivo;
+          detailEl.style.display = 'block';
         }
 
 

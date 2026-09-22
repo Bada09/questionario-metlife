@@ -677,6 +677,20 @@
       position: relative;
     }
 
+    .id-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .id-field label { display: block; font-size: 13px; font-weight: 600; color: var(--primary-navy); margin-bottom: 6px; }
+    .id-field label .req { color: var(--nps-detractor); margin-left: 2px; }
+    .form-input {
+      width: 100%; padding: 12px 14px; border-radius: var(--radius-md);
+      border: 1.5px solid var(--border); font-family: inherit; font-size: 14px;
+      color: var(--text-main); background: var(--bg-input); transition: var(--transition);
+    }
+    .form-input:focus { outline: none; border-color: var(--border-focus); background: #fff; box-shadow: 0 0 0 4px rgba(0,122,188,0.10); }
+    .form-input.invalid { border-color: var(--nps-detractor); background: #fef2f2; }
+    .id-error { display: none; margin-top: 12px; font-size: 13px; color: var(--nps-detractor); font-weight: 500; }
+    .id-error.show { display: block; }
+    @media (max-width: 640px) { .id-grid { grid-template-columns: 1fr; } }
+
     .form-textarea {
       width: 100%;
       min-height: 100px;
@@ -883,6 +897,7 @@
       box-shadow: 0 4px 12px rgba(0, 122, 188, 0.25);
     }
 
+    .btn:disabled { opacity: 0.6; cursor: wait; }
     .btn-submit:hover {
       background: linear-gradient(135deg, #0087d1 0%, var(--primary) 100%);
       box-shadow: 0 6px 16px rgba(0, 122, 188, 0.35);
@@ -1049,9 +1064,15 @@
     <aside class="sidebar-nav">
       <div class="sidebar-header">
         <span>Seções</span>
-        <span style="font-size: 10px; color: var(--accent-green-dark); font-weight: 700;">7 BLOCOS</span>
+        <span style="font-size: 10px; color: var(--accent-green-dark); font-weight: 700;">7 BLOCOS + ID</span>
       </div>
       <ul class="sidebar-list">
+        <li class="sidebar-item" data-block="0">
+          <a href="#bloco-0">
+            <span>Identificação</span>
+            <span class="badge-count" id="badge-0">0/2</span>
+          </a>
+        </li>
         <li class="sidebar-item" data-block="1">
           <a href="#bloco-1">
             <span>1. Experiência de Uso</span>
@@ -1132,6 +1153,32 @@
       </section>
 
       <form id="surveyForm" autocomplete="off">
+
+        <!-- IDENTIFICAÇÃO -->
+        <section class="block-card" id="bloco-0" data-block-id="0">
+          <div class="block-header">
+            <div>
+              <span class="block-pill">Antes de começar</span>
+              <h2 class="block-title">IDENTIFICAÇÃO</h2>
+            </div>
+            <div class="block-status-icon" id="status-0">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+          </div>
+          <div class="block-body">
+            <div class="id-grid">
+              <div class="id-field">
+                <label for="nome">Seu nome<span class="req">*</span></label>
+                <input type="text" class="form-input" id="nome" name="nome" placeholder="Nome e sobrenome" autocomplete="name" maxlength="120">
+              </div>
+              <div class="id-field">
+                <label for="agencia">Nome da agência<span class="req">*</span></label>
+                <input type="text" class="form-input" id="agencia" name="agencia" placeholder="Ex.: Agência Centro SP" maxlength="120">
+              </div>
+            </div>
+            <div class="id-error" id="idError">Preencha seu nome e o nome da agência para enviar a avaliação.</div>
+          </div>
+        </section>
 
         <!-- BLOCO 1 -->
         <section class="block-card" id="bloco-1" data-block-id="1">
@@ -1715,7 +1762,7 @@
       <div class="modal-stats">
         <div class="modal-stat-line">
           <span>Status do Envio:</span>
-          <strong style="color: #10b981;">Gravado com Sucesso</strong>
+          <strong id="modalSendStatus" style="color: #10b981;">-</strong>
         </div>
         <div class="modal-stat-line">
           <span>Perguntas Respondidas:</span>
@@ -1750,6 +1797,11 @@
   <!-- JavaScript -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
+      // ============================================================
+      // CONFIGURAÇÃO — cole aqui a URL do Web App do Google Apps Script
+      // (termina em /exec). Veja o guia de configuração.
+      const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxNJ-108mcxw3jab5XjcgyCrHkwZ4YlvmJoNR5bhkOl5IKmIo38F37iNG4Oiz6xq2kS9Q/exec';
+      // ============================================================
       const STORAGE_KEY = 'metlife_pilot_survey_data';
       const form = document.getElementById('surveyForm');
       const progressBar = document.getElementById('progressBar');
@@ -1759,6 +1811,7 @@
       const totalQuestions = 22;
 
       const blockQuestions = {
+        0: ['nome', 'agencia'],
         1: ['q1', 'q2', 'q3', 'q4'],
         2: ['q5', 'q6', 'q7', 'q8'],
         3: ['q9', 'q10', 'q11'],
@@ -1850,7 +1903,8 @@
       });
 
       form.addEventListener('input', (e) => {
-        if (e.target.tagName === 'TEXTAREA') {
+        if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT') {
+          if (e.target.classList.contains('form-input')) e.target.classList.remove('invalid');
           saveDraft();
           updateProgress();
         }
@@ -1890,28 +1944,94 @@
       const submitBtn = document.getElementById('submitBtn');
       let submissionPayload = null;
 
-      submitBtn.addEventListener('click', (e) => {
+      const nomeInput = document.getElementById('nome');
+      const agenciaInput = document.getElementById('agencia');
+      const idError = document.getElementById('idError');
+      const submitLabel = submitBtn.querySelector('span');
+
+      function countAnswered(data) {
+        let n = 0;
+        for (let i = 1; i <= totalQuestions; i++) if (data['q' + i]) n++;
+        return n;
+      }
+
+      submitBtn.addEventListener('click', async (e) => {
         e.preventDefault();
         const data = getFormData();
-        const count = Object.keys(data).length;
 
+        // Identificação obrigatória
+        const nome = (data.nome || '').trim();
+        const agencia = (data.agencia || '').trim();
+        nomeInput.classList.toggle('invalid', !nome);
+        agenciaInput.classList.toggle('invalid', !agencia);
+        if (!nome || !agencia) {
+          idError.classList.add('show');
+          document.getElementById('bloco-0').scrollIntoView({ behavior: 'smooth', block: 'start' });
+          (nome ? agenciaInput : nomeInput).focus({ preventScroll: true });
+          return;
+        }
+        idError.classList.remove('show');
+
+        const count = countAnswered(data);
         if (count === 0) {
           alert('Por favor, responda ao menos algumas perguntas antes de enviar.');
           return;
         }
-
         if (count < 14) {
           const proceed = confirm(`Você respondeu ${count} de 22 perguntas. Deseja finalizar o envio mesmo assim?`);
           if (!proceed) return;
         }
 
+        const respostas = {};
+        for (let i = 1; i <= totalQuestions; i++) {
+          if (data['q' + i]) respostas['q' + i] = data['q' + i];
+        }
+
         submissionPayload = {
           pesquisa: 'METLIFE — PESQUISA DE AVALIAÇÃO DO PILOTO',
           timestamp: new Date().toISOString(),
+          nome: nome,
+          agencia: agencia,
           totalPerguntas: totalQuestions,
           respondidas: count,
-          respostas: data
+          respostas: respostas
         };
+
+        // Envio para a planilha
+        submitBtn.disabled = true;
+        submitLabel.textContent = 'Enviando…';
+        let enviado = false;
+        try {
+          if (!SCRIPT_URL || SCRIPT_URL.indexOf('/exec') === -1) throw new Error('URL de envio não configurada');
+          const res = await fetch(SCRIPT_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify(submissionPayload)
+          });
+          const out = await res.json().catch(() => ({}));
+          enviado = res.ok && out.ok === true;
+        } catch (err) {
+          console.error('Falha no envio:', err);
+        }
+        submitBtn.disabled = false;
+        submitLabel.textContent = 'Enviar Avaliação';
+
+        const statusEl = document.getElementById('modalSendStatus');
+        const headingEl = document.querySelector('#successModal .modal-heading');
+        const paraEl = document.querySelector('#successModal .modal-paragraph');
+        if (enviado) {
+          statusEl.textContent = 'Enviado com sucesso';
+          statusEl.style.color = '#10b981';
+          headingEl.textContent = 'Pesquisa Concluída!';
+          paraEl.textContent = `Obrigado, ${nome.split(' ')[0]}! Suas contribuições serão essenciais para o refinamento da plataforma.`;
+          try { localStorage.removeItem(STORAGE_KEY); } catch (_) {}
+          saveStatus.textContent = 'Avaliação enviada';
+        } else {
+          statusEl.textContent = 'Não foi possível enviar';
+          statusEl.style.color = '#ef4444';
+          headingEl.textContent = 'Envio não concluído';
+          paraEl.textContent = 'Suas respostas continuam salvas neste navegador. Verifique a conexão e tente enviar novamente em instantes.';
+        }
 
         document.getElementById('modalAnsweredCount').textContent = `${count} de ${totalQuestions}`;
         document.getElementById('modalNpsScore').textContent = data.q19 !== undefined ? `${data.q19} / 10` : 'Não informado';
@@ -1939,7 +2059,9 @@
       // Download CSV
       document.getElementById('downloadCsvBtn').addEventListener('click', () => {
         const data = getFormData();
-        const rows = [['Questão', 'ID', 'Resposta']];
+        const rows = [['Questão', 'ID', 'Resposta'],
+          ['"Nome"', '"nome"', `"${(data.nome || '').replace(/"/g, '""')}"`],
+          ['"Agência"', '"agencia"', `"${(data.agencia || '').replace(/"/g, '""')}"`]];
         for (let i = 1; i <= totalQuestions; i++) {
           const qId = 'q' + i;
           const qElem = document.querySelector(`[data-qid="${qId}"] .question-text`);

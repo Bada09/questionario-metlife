@@ -717,6 +717,14 @@
       color: var(--text-light);
     }
 
+    .question-item.missing .question-text { color: #b91c1c; }
+    .question-item.missing .question-num { background: #fee2e2; color: #b91c1c; }
+    .question-item.missing .form-textarea { border-color: #ef4444; background: #fef2f2; }
+    .missing-note { display: none; margin-top: 10px; font-size: 12.5px; font-weight: 600; color: #b91c1c; }
+    .question-item.missing .missing-note { display: block; }
+    .required-banner { display: none; position: fixed; left: 50%; bottom: 96px; transform: translateX(-50%); z-index: 60; background: #0b1f3a; color: #fff; font-size: 14px; font-weight: 600; padding: 12px 18px; border-radius: 12px; box-shadow: 0 12px 30px rgba(11,31,58,.25); max-width: calc(100% - 32px); text-align: center; }
+    .required-banner.show { display: block; }
+
     .textarea-hint {
       text-align: right;
       font-size: 11.5px;
@@ -1383,7 +1391,7 @@
               </div>
               <div class="textarea-wrap">
                 <textarea class="form-textarea" name="q8" id="q8" placeholder="Sugira novos temas, cenários comerciais ou objeções para simular..."></textarea>
-                <div class="textarea-hint">Opcional</div>
+                <div class="textarea-hint">Obrigatória</div>
               </div>
             </div>
 
@@ -1547,7 +1555,7 @@
               </div>
               <div class="textarea-wrap">
                 <textarea class="form-textarea" name="q15" id="q15" placeholder="Compartilhe suas ideias sobre calibragem de pontuação, clareza ou formato do feedback..."></textarea>
-                <div class="textarea-hint">Opcional</div>
+                <div class="textarea-hint">Obrigatória</div>
               </div>
             </div>
 
@@ -1692,7 +1700,7 @@
               </div>
               <div class="textarea-wrap">
                 <textarea class="form-textarea" name="q20" id="q20" placeholder="Conte-nos o que você mais gostou ou o que funcionou especialmente bem..."></textarea>
-                <div class="textarea-hint">Opcional</div>
+                <div class="textarea-hint">Obrigatória</div>
               </div>
             </div>
 
@@ -1705,7 +1713,7 @@
               </div>
               <div class="textarea-wrap">
                 <textarea class="form-textarea" name="q21" id="q21" placeholder="Destaque pontos de atrito, lentidão ou aspectos a aperfeiçoar..."></textarea>
-                <div class="textarea-hint">Opcional</div>
+                <div class="textarea-hint">Obrigatória</div>
               </div>
             </div>
 
@@ -1718,7 +1726,7 @@
               </div>
               <div class="textarea-wrap">
                 <textarea class="form-textarea" name="q22" id="q22" placeholder="Qual seria a sua sugestão número 1 de prioridade?"></textarea>
-                <div class="textarea-hint">Opcional</div>
+                <div class="textarea-hint">Obrigatória</div>
               </div>
             </div>
 
@@ -1750,6 +1758,8 @@
     </div>
   </footer>
 
+  <div class="required-banner" id="requiredBanner" role="alert"></div>
+
   <!-- Submission Modal -->
   <div class="modal-backdrop" id="successModal">
     <div class="modal-box">
@@ -1773,7 +1783,7 @@
       // ============================================================
       // CONFIGURAÇÃO — cole aqui a URL do Web App do Google Apps Script
       // (termina em /exec). Veja o guia de configuração.
-      const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxNJ-108mcxw3jab5XjcgyCrHkwZ4YlvmJoNR5bhkOl5IKmIo38F37iNG4Oiz6xq2kS9Q/exec';
+      const SCRIPT_URL = 'COLE_AQUI_A_URL_DO_WEB_APP';
       // ============================================================
       const STORAGE_KEY = 'metlife_pilot_survey_data';
       const form = document.getElementById('surveyForm');
@@ -1870,6 +1880,18 @@
         });
       }
 
+      // Aviso por pergunta + limpar destaque ao responder
+      document.querySelectorAll('.question-item').forEach(el => {
+        const n = document.createElement('div'); n.className = 'missing-note'; n.textContent = 'Resposta obrigatória';
+        el.appendChild(n);
+      });
+      function clearMissing(e) {
+        const qi = e.target.closest('.question-item');
+        if (qi && e.target.value && e.target.value.trim() !== '') qi.classList.remove('missing');
+      }
+      form.addEventListener('change', clearMissing);
+      form.addEventListener('input', clearMissing);
+
       form.addEventListener('change', () => {
         saveDraft();
         updateProgress();
@@ -1946,13 +1968,19 @@
         idError.classList.remove('show');
 
         const count = countAnswered(data);
-        if (count === 0) {
-          alert('Por favor, responda ao menos algumas perguntas antes de enviar.');
+        // Todas as perguntas são obrigatórias
+        const faltando = [];
+        for (let i = 1; i <= totalQuestions; i++) if (!data['q' + i]) faltando.push('q' + i);
+        document.querySelectorAll('.question-item').forEach(el => el.classList.toggle('missing', faltando.includes(el.dataset.qid)));
+        if (faltando.length) {
+          const banner = document.getElementById('requiredBanner');
+          banner.textContent = faltando.length === 1
+            ? `Falta responder 1 pergunta (nº ${faltando[0].slice(1)}).`
+            : `Faltam ${faltando.length} perguntas: nº ${faltando.map(q => q.slice(1)).join(', ')}.`;
+          banner.classList.add('show');
+          clearTimeout(banner._t); banner._t = setTimeout(() => banner.classList.remove('show'), 6000);
+          document.querySelector(`[data-qid="${faltando[0]}"]`).scrollIntoView({ behavior: 'smooth', block: 'center' });
           return;
-        }
-        if (count < 14) {
-          const proceed = confirm(`Você respondeu ${count} de 22 perguntas. Deseja finalizar o envio mesmo assim?`);
-          if (!proceed) return;
         }
 
         const respostas = {};
